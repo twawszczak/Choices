@@ -385,7 +385,7 @@ describe('choices', () => {
         });
 
         it('nullifys templates config', () => {
-          expect(instance.templates).to.equal(null);
+          expect(instance._templates).to.equal(null);
         });
 
         it('resets initialise flag', () => {

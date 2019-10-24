@@ -95,7 +95,7 @@ class Choices {
       this.passedElement = new WrappedSelect({
         element: passedElement,
         classNames: this.config.classNames,
-        template: data => this.templates.option(data),
+        template: data => this._templates.option(data),
       });
     }
 
@@ -226,8 +226,7 @@ class Choices {
     }
 
     this.clearStore();
-
-    this.templates = null;
+    this._templates = null;
     this.initialised = false;
   }
 
@@ -1771,7 +1770,7 @@ class Choices {
     }
 
     const { classNames } = this.config;
-    return this.templates[template].call(this, classNames, ...args);
+    return this._templates[template].call(this, classNames, ...args);
   }
 
   _createTemplates() {
@@ -1785,7 +1784,7 @@ class Choices {
       userTemplates = callbackOnCreateTemplates.call(this, strToEl);
     }
 
-    this.templates = merge(TEMPLATES, userTemplates);
+    this._templates = merge(TEMPLATES, userTemplates);
   }
 
   _createElements() {
