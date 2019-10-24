@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import List from './list';
 
-describe('components/list', () => {
+describe.only('components/list', () => {
   let instance;
   let choicesElement;
 
@@ -20,6 +20,14 @@ describe('components/list', () => {
   describe('constructor', () => {
     it('assigns choices element to class', () => {
       expect(instance.element).to.eql(choicesElement);
+    });
+
+    it('sets the height of the element', () => {
+      expect(instance.height).to.eql(choicesElement.scrollTop);
+    });
+
+    it('sets whether the element has children', () => {
+      expect(instance.hasChildren).to.eql(false);
     });
   });
 
@@ -60,6 +68,14 @@ describe('components/list', () => {
       const expectedResponse = childElement;
       const actualResponse = instance.getChild(`.${childClass}`);
       expect(expectedResponse).to.eql(actualResponse);
+    });
+  });
+
+  describe('scrollToTop', () => {
+    it("sets the position's scroll position to 0", () => {
+      instance.element.scrollTop = 10;
+      instance.scrollToTop();
+      expect(instance.element.scrollTop).to.equal(0);
     });
   });
 });
