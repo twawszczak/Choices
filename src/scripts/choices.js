@@ -28,6 +28,7 @@ import {
   getAdjacentEl,
   getType,
   isType,
+  isElement,
   strToEl,
   sortByScore,
   generateId,
@@ -45,16 +46,6 @@ import {
  */
 class Choices {
   constructor(element = '[data-choice]', userConfig = {}) {
-    if (isType('String', element)) {
-      const elements = Array.from(document.querySelectorAll(element));
-
-      // If there are multiple elements, create a new instance
-      // for each element besides the first one (as that already has an instance)
-      if (elements.length > 1) {
-        return this._generateInstances(elements, userConfig);
-      }
-    }
-
     this.config = merge.all(
       [DEFAULT_CONFIG, Choices.userDefaults, userConfig],
       // When merging array configs, replace with a copy of the userConfig array,
@@ -74,19 +65,18 @@ class Choices {
       this.config.renderSelectedChoices = 'auto';
     }
 
-    // Retrieve triggering element (i.e. element with 'data-choice' trigger)
-    const passedElement = isType('String', element)
-      ? document.querySelector(element)
-      : element;
+    let passedElement;
+
+    if (isType('String', element)) {
+      passedElement = document.querySelector(element);
+    } else if (isElement(element)) {
+      passedElement = element;
+    }
 
     if (!passedElement) {
-      if (!this.config.silent) {
-        console.error(
-          'Could not find passed element or passed element was of an invalid type',
-        );
-      }
-
-      return;
+      throw Error(
+        'Could not find passed element or passed element was of an invalid type',
+      );
     }
 
     this._isTextElement = passedElement.type === 'text';
@@ -105,12 +95,14 @@ class Choices {
       this.passedElement = new WrappedSelect({
         element: passedElement,
         classNames: this.config.classNames,
-        template: data => this.config.templates.option(data),
+        template: data => this.templates.option(data),
       });
     }
 
     if (!this.passedElement) {
-      return console.error('Passed element was of an invalid type');
+      throw TypeError(
+        'Expected one of the following types text|select-one|select-multiple',
+      );
     }
 
     this.initialised = false;
@@ -229,7 +221,7 @@ class Choices {
 
     this.clearStore();
 
-    this.config.templates = null;
+    this.templates = null;
     this.initialised = false;
   }
 
@@ -1772,8 +1764,8 @@ class Choices {
       return null;
     }
 
-    const { templates, classNames } = this.config;
-    return templates[template].call(this, classNames, ...args);
+    const { classNames } = this.config;
+    return this.templates[template].call(this, classNames, ...args);
   }
 
   _createTemplates() {
@@ -1787,7 +1779,7 @@ class Choices {
       userTemplates = callbackOnCreateTemplates.call(this, strToEl);
     }
 
-    this.config.templates = merge(TEMPLATES, userTemplates);
+    this.templates = merge(TEMPLATES, userTemplates);
   }
 
   _createElements() {
@@ -2057,16 +2049,6 @@ class Choices {
         keyCode: foundChoice.keyCode,
       });
     }
-  }
-
-  _generateInstances(elements, config) {
-    return elements.reduce(
-      (instances, element) => {
-        instances.push(new Choices(element, config));
-        return instances;
-      },
-      [this],
-    );
   }
 
   _generatePlaceholderValue() {

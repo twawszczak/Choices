@@ -2,12 +2,18 @@ import { expect } from 'chai';
 import { spy, stub } from 'sinon';
 
 import Choices from './choices';
-import { EVENTS, ACTION_TYPES } from './constants';
+import { EVENTS, ACTION_TYPES, DEFAULT_CONFIG } from './constants';
+import { WrappedSelect, WrappedInput } from './components/index';
 
 describe('choices', () => {
   let instance;
   let output;
   let passedElement;
+
+  afterEach(() => {
+    output = null;
+    instance = null;
+  });
 
   const returnsInstance = () => {
     it('returns this', () => {
@@ -15,19 +21,162 @@ describe('choices', () => {
     });
   };
 
-  describe('constructor can return array of instances', () => {
-    it('should be the same as number of matched elements', () => {
-      document.body.innerHTML = `
-      <input data-choice type="text" id="inp1" />
-      <input data-choice type="text" id="inp2" />
-      <input data-choice type="text" id="inp3" />
-      `;
+  describe('constructor', () => {
+    describe('config', () => {
+      describe('not passing config options', () => {
+        it('uses the default config', () => {
+          document.body.innerHTML = `
+          <input data-choice type="text" id="input-1" />
+          `;
 
-      const inputs = document.querySelectorAll('[data-choice]');
-      expect(inputs.length).to.equal(3);
+          instance = new Choices();
 
-      const choices = new Choices();
-      expect(choices.length).to.equal(inputs.length);
+          expect(instance.config).to.eql(DEFAULT_CONFIG);
+        });
+      });
+
+      describe('passing config options', () => {
+        it('merges the passed config with the default config', () => {
+          document.body.innerHTML = `
+          <input data-choice type="text" id="input-1" />
+          `;
+
+          const config = {
+            renderChoiceLimit: 5,
+          };
+          instance = new Choices('[data-choice]', config);
+
+          expect(instance.config).to.eql({
+            ...DEFAULT_CONFIG,
+            ...config,
+          });
+        });
+      });
+
+      describe('setting user default config options', () => {
+        const userDefaults = {
+          renderChoiceLimit: 5,
+        };
+        beforeEach(() => {
+          Choices.userDefaults = userDefaults;
+        });
+
+        beforeEach(() => {
+          Choices.userDefaults = {};
+        });
+
+        it('merges the user default config with the default config for all instances of Choices', () => {
+          document.body.innerHTML = `
+          <input data-choice type="text" id="input-1" />
+          <input data-choice type="text" id="input-2" />
+          <input data-choice type="text" id="input-3" />
+          `;
+
+          const inputs = Array.from(document.querySelectorAll('[data-choice]'));
+
+          inputs.forEach(input => {
+            const { config } = new Choices(`#${input.id}`);
+
+            expect(config).to.eql({
+              ...DEFAULT_CONFIG,
+              ...config,
+            });
+          });
+        });
+      });
+    });
+
+    describe('not passing an element', () => {
+      it('returns a Choices instance for the first element with a "data-choice" attribute', () => {
+        document.body.innerHTML = `
+        <input data-choice type="text" id="input-1" />
+        <input data-choice type="text" id="input-2" />
+        <input data-choice type="text" id="input-3" />
+        `;
+
+        const inputs = document.querySelectorAll('[data-choice]');
+        expect(inputs.length).to.equal(3);
+
+        instance = new Choices();
+
+        expect(instance.passedElement.element.id).to.equal(inputs[0].id);
+      });
+
+      describe('when an element cannot be found in the DOM', () => {
+        it('throws an error', () => {
+          document.body.innerHTML = ``;
+          expect(() => new Choices()).to.throw(
+            Error,
+            'Could not find passed element or passed element was of an invalid type',
+          );
+        });
+      });
+    });
+
+    describe('passing an element', () => {
+      describe(`passing an element as a DOMString`, () => {
+        describe('passing a input element type', () => {
+          it('sets the "passedElement" instance property as an instance of WrappedInput', () => {
+            document.body.innerHTML = `
+            <input data-choice type="text" id="input-1" />
+            `;
+
+            instance = new Choices('[data-choice]');
+
+            expect(instance.passedElement).to.be.an.instanceOf(WrappedInput);
+          });
+        });
+
+        describe('passing a select element type', () => {
+          it('sets the "passedElement" instance property as an instance of WrappedSelect', () => {
+            document.body.innerHTML = `
+            <select data-choice id="select-1"></select>
+            `;
+
+            instance = new Choices('[data-choice]');
+
+            expect(instance.passedElement).to.be.an.instanceOf(WrappedSelect);
+          });
+        });
+      });
+
+      describe(`passing an element as a HTMLElement`, () => {
+        describe('passing a input element type', () => {
+          it('sets the "passedElement" instance property as an instance of WrappedInput', () => {
+            document.body.innerHTML = `
+            <input data-choice type="text" id="input-1" />
+            `;
+
+            instance = new Choices(document.querySelector('[data-choice]'));
+
+            expect(instance.passedElement).to.be.an.instanceOf(WrappedInput);
+          });
+        });
+
+        describe('passing a select element type', () => {
+          it('sets the "passedElement" instance property as an instance of WrappedSelect', () => {
+            document.body.innerHTML = `
+            <select data-choice id="select-1"></select>
+            `;
+
+            instance = new Choices(document.querySelector('[data-choice]'));
+
+            expect(instance.passedElement).to.be.an.instanceOf(WrappedSelect);
+          });
+        });
+      });
+
+      describe('passing an invalid element type', () => {
+        it('throws an TypeError', () => {
+          document.body.innerHTML = `
+          <div data-choice id="div-1"></div>
+          `;
+          expect(() => new Choices('[data-choice]')).to.throw(
+            TypeError,
+            'Expected one of the following types text|select-one|select-multiple',
+          );
+        });
+      });
     });
   });
 
@@ -39,11 +188,6 @@ describe('choices', () => {
       document.body.appendChild(passedElement);
 
       instance = new Choices(passedElement);
-    });
-
-    afterEach(() => {
-      output = null;
-      instance = null;
     });
 
     describe('init', () => {
@@ -188,7 +332,7 @@ describe('choices', () => {
         });
 
         it('nullifys templates config', () => {
-          expect(instance.config.templates).to.equal(null);
+          expect(instance.templates).to.equal(null);
         });
 
         it('resets initialise flag', () => {
