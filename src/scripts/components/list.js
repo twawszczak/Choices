@@ -6,7 +6,6 @@ export default class List {
 
     this.scrollPos = this.element.scrollTop;
     this.height = this.element.offsetHeight;
-    this.hasChildren = this.element.hasChildNodes();
   }
 
   clear() {
@@ -19,6 +18,10 @@ export default class List {
 
   getChild(selector) {
     return this.element.querySelector(selector);
+  }
+
+  hasChildren() {
+    return this.element.hasChildNodes();
   }
 
   scrollToTop() {

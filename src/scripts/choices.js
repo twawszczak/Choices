@@ -1127,7 +1127,7 @@ class Choices {
     const { activeItems } = this._store;
     const hasFocusedInput = this.input.isFocussed;
     const hasActiveDropdown = this.dropdown.isActive;
-    const hasItems = this.itemList.hasChildren;
+    const hasItems = this.itemList.hasChildren();
     const keyString = String.fromCharCode(keyCode);
 
     const {
