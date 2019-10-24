@@ -114,6 +114,59 @@ describe('choices', () => {
     });
 
     describe('passing an element', () => {
+      describe('passing an element that has not been initialised with Choices', () => {
+        beforeEach(() => {
+          document.body.innerHTML = `
+          <input type="text" id="input-1" />
+          `;
+        });
+
+        it('sets the initialised flag to true', () => {
+          instance = new Choices('#input-1');
+          expect(instance.initialised).to.equal(true);
+        });
+
+        it('intialises', () => {
+          const initSpy = spy();
+          // initialise with the same element
+          instance = new Choices('#input-1', {
+            silent: true,
+            callbackOnInit: initSpy,
+          });
+
+          expect(initSpy.called).to.equal(true);
+        });
+      });
+
+      describe('passing an element that has already be initialised with Choices', () => {
+        beforeEach(() => {
+          document.body.innerHTML = `
+          <input type="text" id="input-1" />
+          `;
+
+          // initialise once
+          new Choices('#input-1', { silent: true });
+        });
+
+        it('sets the initialised flag to true', () => {
+          // initialise with the same element
+          instance = new Choices('#input-1', { silent: true });
+
+          expect(instance.initialised).to.equal(true);
+        });
+
+        it('does not reinitialise', () => {
+          const initSpy = spy();
+          // initialise with the same element
+          instance = new Choices('#input-1', {
+            silent: true,
+            callbackOnInit: initSpy,
+          });
+
+          expect(initSpy.called).to.equal(false);
+        });
+      });
+
       describe(`passing an element as a DOMString`, () => {
         describe('passing a input element type', () => {
           it('sets the "passedElement" instance property as an instance of WrappedInput', () => {

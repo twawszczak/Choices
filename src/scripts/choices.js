@@ -150,19 +150,25 @@ class Choices {
     this._onDirectionKey = this._onDirectionKey.bind(this);
     this._onDeleteKey = this._onDeleteKey.bind(this);
 
-    if (!this.config.silent) {
-      if (this.config.shouldSortItems === true && this._isSelectOneElement) {
+    if (this.config.shouldSortItems === true && this._isSelectOneElement) {
+      if (!this.config.silent) {
         console.warn(
           "shouldSortElements: Type of passed element is 'select-one', falling back to false.",
         );
       }
+    }
 
-      // If element has already been initialised with Choices, fail silently
-      if (this.passedElement.element.getAttribute('data-choice') === 'active') {
+    // If element has already been initialised with Choices, fail silently
+    if (this.passedElement.element.getAttribute('data-choice') === 'active') {
+      if (!this.config.silent) {
         console.warn(
           'Trying to initialise Choices on element already initialised',
         );
       }
+
+      this.initialised = true;
+
+      return;
     }
 
     // Let's go
