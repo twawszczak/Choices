@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+
 const { JSDOM } = require('jsdom');
 
 const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
@@ -50,6 +52,8 @@ global.Element = window.Element;
 global.HTMLElement = window.HTMLElement;
 global.HTMLOptionElement = window.HTMLOptionElement;
 global.HTMLOptGroupElement = window.HTMLOptGroupElement;
+global.HTMLSelectElement = window.HTMLSelectElement;
+global.HTMLInputElement = window.HTMLInputElement;
 global.DocumentFragment = window.DocumentFragment;
 
 copyProps(window, global);

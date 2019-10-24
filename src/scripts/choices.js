@@ -28,7 +28,6 @@ import {
   getAdjacentEl,
   getType,
   isType,
-  isElement,
   strToEl,
   sortByScore,
   generateId,
@@ -65,17 +64,18 @@ class Choices {
       this.config.renderSelectedChoices = 'auto';
     }
 
-    let passedElement;
+    const passedElement = isType('String', element)
+      ? document.querySelector(element)
+      : element;
 
-    if (isType('String', element)) {
-      passedElement = document.querySelector(element);
-    } else if (isElement(element)) {
-      passedElement = element;
-    }
-
-    if (!passedElement) {
-      throw Error(
-        'Could not find passed element or passed element was of an invalid type',
+    if (
+      !(
+        passedElement instanceof HTMLInputElement ||
+        passedElement instanceof HTMLSelectElement
+      )
+    ) {
+      throw TypeError(
+        'Expected one of the following types text|select-one|select-multiple',
       );
     }
 
@@ -91,18 +91,12 @@ class Choices {
         classNames: this.config.classNames,
         delimiter: this.config.delimiter,
       });
-    } else if (this._isSelectElement) {
+    } else {
       this.passedElement = new WrappedSelect({
         element: passedElement,
         classNames: this.config.classNames,
         template: data => this._templates.option(data),
       });
-    }
-
-    if (!this.passedElement) {
-      throw TypeError(
-        'Expected one of the following types text|select-one|select-multiple',
-      );
     }
 
     this.initialised = false;

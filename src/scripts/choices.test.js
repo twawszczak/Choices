@@ -106,8 +106,8 @@ describe('choices', () => {
         it('throws an error', () => {
           document.body.innerHTML = ``;
           expect(() => new Choices()).to.throw(
-            Error,
-            'Could not find passed element or passed element was of an invalid type',
+            TypeError,
+            'Expected one of the following types text|select-one|select-multiple',
           );
         });
       });
