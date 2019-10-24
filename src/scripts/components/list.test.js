@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import List from './list';
 
-describe.only('components/list', () => {
+describe('components/list', () => {
   let instance;
   let choicesElement;
 
