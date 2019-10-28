@@ -119,6 +119,7 @@ export const TEMPLATES = /** @type {Templates} */ ({
       div.setAttribute('aria-multiselectable', 'true');
     }
     div.setAttribute('role', 'listbox');
+
     return div;
   },
 
@@ -137,6 +138,7 @@ export const TEMPLATES = /** @type {Templates} */ ({
         innerHTML: value,
       }),
     );
+
     return div;
   },
 
@@ -187,12 +189,14 @@ export const TEMPLATES = /** @type {Templates} */ ({
     inp.setAttribute('role', 'textbox');
     inp.setAttribute('aria-autocomplete', 'list');
     inp.setAttribute('aria-label', placeholderValue);
+
     return inp;
   },
   dropdown({ list, listDropdown }) {
     const div = document.createElement('div');
     div.classList.add(list, listDropdown);
     div.setAttribute('aria-expanded', 'false');
+
     return div;
   },
   notice({ item, itemChoice, noResults, noChoices }, innerHTML, type = '') {
@@ -202,6 +206,7 @@ export const TEMPLATES = /** @type {Templates} */ ({
     } else if (type === 'no-results') {
       classes.push(noResults);
     }
+
     return Object.assign(document.createElement('div'), {
       innerHTML,
       className: classes.join(' '),
@@ -213,6 +218,7 @@ export const TEMPLATES = /** @type {Templates} */ ({
       opt.dataset.customProperties = customProperties;
     }
     opt.disabled = disabled;
+
     return opt;
   },
 });

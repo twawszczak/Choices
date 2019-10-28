@@ -304,11 +304,13 @@ class Choices {
 
   highlightAll() {
     this._store.items.forEach(item => this.highlightItem(item));
+
     return this;
   }
 
   unhighlightAll() {
     this._store.items.forEach(item => this.unhighlightItem(item));
+
     return this;
   }
 
@@ -384,6 +386,7 @@ class Choices {
     const values = this._store.activeItems.reduce((selectedItems, item) => {
       const itemValue = valueOnly ? item.value : item;
       selectedItems.push(itemValue);
+
       return selectedItems;
     }, []);
 
@@ -399,6 +402,7 @@ class Choices {
     }
 
     items.forEach(value => this._setChoiceOrItem(value));
+
     return this;
   }
 
@@ -456,10 +460,13 @@ class Choices {
 
   clearChoices() {
     this._store.dispatch(clearChoices());
+
+    return this;
   }
 
   clearStore() {
     this._store.dispatch(clearAll());
+
     return this;
   }
 
@@ -621,6 +628,7 @@ class Choices {
         if (this._isSelectOneElement) {
           return choice.groupId === group.id;
         }
+
         return (
           choice.groupId === group.id &&
           (this.config.renderSelectedChoices === 'always' || !choice.selected)
@@ -685,6 +693,7 @@ class Choices {
         } else {
           acc.normalChoices.push(choice);
         }
+
         return acc;
       },
       { placeholderChoices: [], normalChoices: [] },
@@ -1784,6 +1793,7 @@ class Choices {
     }
 
     const { templates, classNames } = this.config;
+
     return templates[template].call(this, classNames, ...args);
   }
 
@@ -2076,6 +2086,7 @@ class Choices {
     return elements.reduce(
       (instances, element) => {
         instances.push(new Choices(element, config));
+
         return instances;
       },
       [this],

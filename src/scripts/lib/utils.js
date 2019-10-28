@@ -36,6 +36,7 @@ export const wrap = (element, wrapper = document.createElement('div')) => {
   } else {
     element.parentNode.appendChild(wrapper);
   }
+
   return wrapper.appendChild(element);
 };
 
@@ -100,6 +101,7 @@ export const sanitise = value => {
 
 export const strToEl = (() => {
   const tmpEl = document.createElement('div');
+
   return str => {
     const cleanedInput = str.trim();
     tmpEl.innerHTML = cleanedInput;
@@ -191,6 +193,7 @@ export const dispatchEvent = (element, type, customArgs = null) => {
 export const getWindowHeight = () => {
   const { body } = document;
   const html = document.documentElement;
+
   return Math.max(
     body.scrollHeight,
     body.offsetHeight,
