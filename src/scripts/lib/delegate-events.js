@@ -10,7 +10,11 @@ window.delegateEvent = (function delegateEvent() {
 
   function _callback(event) {
     const type = events.get(event.type);
-    if (!type) return;
+
+    if (!type) {
+      return;
+    }
+
     type.forEach(fn => fn(event));
   }
 
@@ -29,7 +33,9 @@ window.delegateEvent = (function delegateEvent() {
       }
     },
     remove: function remove(type, fn) {
-      if (!events.get(type)) return;
+      if (!events.get(type)) {
+        return;
+      }
       events.set(type, events.get(type).filter(item => item !== fn));
       if (!events.get(type).length) {
         addedListenerTypes.splice(addedListenerTypes.indexOf(type), 1);

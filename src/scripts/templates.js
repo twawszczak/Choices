@@ -18,11 +18,18 @@ export const TEMPLATES = /** @type {Templates} */ ({
       dir,
     });
     div.dataset.type = passedElementType;
-    if (isSelectOneElement) div.tabIndex = 0;
+
+    if (isSelectOneElement) {
+      div.tabIndex = 0;
+    }
+
     if (isSelectElement) {
       div.setAttribute('role', searchEnabled ? 'combobox' : 'listbox');
-      if (searchEnabled) div.setAttribute('aria-autocomplete', 'list');
+      if (searchEnabled) {
+        div.setAttribute('aria-autocomplete', 'list');
+      }
     }
+
     div.setAttribute('aria-haspopup', 'true');
     div.setAttribute('aria-expanded', 'false');
 
@@ -69,14 +76,22 @@ export const TEMPLATES = /** @type {Templates} */ ({
       value,
       customProperties,
     });
-    if (active) div.setAttribute('aria-selected', 'true');
-    if (disabled) div.setAttribute('aria-disabled', 'true');
+    if (active) {
+      div.setAttribute('aria-selected', 'true');
+    }
+    if (disabled) {
+      div.setAttribute('aria-disabled', 'true');
+    }
 
-    if (isPlaceholder) div.classList.add(placeholder);
+    if (isPlaceholder) {
+      div.classList.add(placeholder);
+    }
     div.classList.add(highlighted ? highlightedState : itemSelectable);
 
     if (removeItemButton) {
-      if (disabled) div.classList.remove(itemSelectable);
+      if (disabled) {
+        div.classList.remove(itemSelectable);
+      }
       div.dataset.deletable = '';
       /** @todo This MUST be localizable, not hardcoded! */
       const REMOVE_ITEM_TEXT = 'Remove item';
@@ -100,7 +115,9 @@ export const TEMPLATES = /** @type {Templates} */ ({
       className: list,
       dir: 'ltr',
     });
-    if (!isSelectOneElement) div.setAttribute('aria-multiselectable', 'true');
+    if (!isSelectOneElement) {
+      div.setAttribute('aria-multiselectable', 'true');
+    }
     div.setAttribute('role', 'listbox');
     return div;
   },
@@ -111,7 +128,9 @@ export const TEMPLATES = /** @type {Templates} */ ({
     });
     div.setAttribute('role', 'group');
     Object.assign(div.dataset, { group: '', id, value });
-    if (disabled) div.setAttribute('aria-disabled', 'true');
+    if (disabled) {
+      div.setAttribute('aria-disabled', 'true');
+    }
     div.appendChild(
       Object.assign(document.createElement('div'), {
         className: groupHeading,
@@ -151,7 +170,9 @@ export const TEMPLATES = /** @type {Templates} */ ({
     if (disabled) {
       div.dataset.choiceDisabled = '';
       div.setAttribute('aria-disabled', 'true');
-    } else div.dataset.choiceSelectable = '';
+    } else {
+      div.dataset.choiceSelectable = '';
+    }
 
     return div;
   },
@@ -176,8 +197,11 @@ export const TEMPLATES = /** @type {Templates} */ ({
   },
   notice({ item, itemChoice, noResults, noChoices }, innerHTML, type = '') {
     const classes = [item, itemChoice];
-    if (type === 'no-choices') classes.push(noChoices);
-    else if (type === 'no-results') classes.push(noResults);
+    if (type === 'no-choices') {
+      classes.push(noChoices);
+    } else if (type === 'no-results') {
+      classes.push(noResults);
+    }
     return Object.assign(document.createElement('div'), {
       innerHTML,
       className: classes.join(' '),
@@ -185,7 +209,9 @@ export const TEMPLATES = /** @type {Templates} */ ({
   },
   option({ label, value, customProperties, active, disabled }) {
     const opt = new Option(label, value, false, active);
-    if (customProperties) opt.dataset.customProperties = customProperties;
+    if (customProperties) {
+      opt.dataset.customProperties = customProperties;
+    }
     opt.disabled = disabled;
     return opt;
   },
