@@ -558,7 +558,9 @@ class Choices {
       }
 
       // it's a choices fetcher
-      requestAnimationFrame(() => this._handleLoadingState(true));
+      ({ then: requestAnimationFrame.bind(window) }.then(() =>
+        this._handleLoadingState(true),
+      ));
       const fetcher = choicesArrayOrFetcher(this);
       if (typeof fetcher === 'object' && typeof fetcher.then === 'function') {
         // that's a promise
@@ -569,6 +571,7 @@ class Choices {
               console.error(err);
             }
           })
+          .then(() => ({ then: requestAnimationFrame.bind(window) }))
           .then(() => this._handleLoadingState(false))
           .then(() => this);
       }
